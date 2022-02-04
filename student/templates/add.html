@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>Schüler hinzufügen</title>
+		
+		<style>
+			html, body {
+				font-family: 'Trebuchet MS', sans-serif;
+				color: {{font}};
+				height: 100%;
+				margin: 0;
+				user-select: none;
+			}
+			body {
+				font-family: 'Trebuchet MS', sans-serif;
+				background-color: {{dark}};
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			form {
+				width: 60%;
+				min-width: 300px;
+				display: flex;
+				justify-content: center;
+				flex-direction: column;
+			}
+			#loginform {
+				background-color: {{light}};
+				border: 5px solid {{accent}};
+				box-sizing: border-box;
+				border-bottom-style: none;
+				border-radius: 0.5vh;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				flex-direction: column;
+			}
+			input[type=text], input[type=password] {
+				background-color: {{input}};
+				border: 3px solid {{accent}};
+				box-sizing: border-box;
+				border-top-style: none;
+				border-radius: 0.5vh;
+			}
+			#submitBtn {
+				width: 90%;
+				padding: 10px;
+				background-color: {{input}};
+				color: {{font}};
+				cursor: pointer;
+				margin-top: 10%;
+				box-sizing: border-box;
+				border: 3px solid {{light}};
+				border-bottom-style: none;
+				border-radius: 0.5vh;
+				font-size: 18px;
+				text-align: center;
+			}
+			#submitBtn:hover {
+				border: 3px solid {{accent}};
+				border-bottom-style: none;
+			}
+			input, label {
+				width: 100%;
+				padding: 10px;
+			}
+			a {
+				width: 100%;
+				text-align: center;
+				margin-top: 20px;
+				color: {{href}};
+				font-size: 14px;
+			}
+			.outerdivs {
+				display: flex;
+				justify-content: center;
+				flex-direction: column;
+				width: 90%;
+			}
+			.errors {
+				display: none;
+				color: red;
+				font-family: monospace;
+				font-size: 20px;
+			}
+			@keyframes errorAnim {
+				10%, 90% {
+					transform: translate3d(-2px, 0, 0);
+				}
+				20%, 80% {
+					transform: translate3d(4px, 0, 0);
+				}
+				30%, 50%, 70% {
+					transform: translate3d(-8px, 0, 0);
+				}
+				40%, 60% {
+					transform: translate3d(8px, 0, 0);
+				}
+				20%, 60% {
+					background-color: {{font_error}};
+				}
+				40%, 80% {
+					background-color: {{input}};
+				}
+			}
+			.errorAnimate {
+				animation-name: errorAnim;
+				animation-duration: 1s;
+			}
+			@keyframes changeBgOpacity {
+				0% {
+				background-color : rgba(0, 0, 0, 0);
+				}
+				100% {
+				background-color : rgba(0, 0, 0, 0.65);
+				}
+			}
+			.overlayAnimate {
+				animation-name: changeBgOpacity;
+				animation-duration: 0.5s;
+				animation-fill-mode: forwards;
+			}
+			.overlay {
+				display: none;
+				position: fixed;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				z-index: 2;
+			}
+			.overlaybody {
+				width: 100%;
+				height: 100%;
+				font-size: 18px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.overlaydiv {
+				border: 3px solid {{accent}};
+				border-bottom-style: none;
+				border-radius: 0.5vh;
+				min-width: 200px;
+				display: flex;
+				flex-direction: column;
+				width: 60%;
+				background-color: {{light}};
+				padding: 5%;
+			}
+			#overlaybuttons {
+				display: flex;
+				justify-content: space-between;
+				flex-flow: row nowrap;
+			}
+			.overlaybtn {
+				width: 90%;
+				padding: 10px;
+				background-color: {{input}};
+				color: {{font}};
+				cursor: pointer;
+				margin-top: 10%;
+				box-sizing: border-box;
+				border: 3px solid {{light}};
+				border-bottom-style: none;
+				border-radius: 0.5vh;
+				text-align: center;
+				transition: 0.2s;
+			}
+			.overlaybtn:hover {
+				border: 3px solid {{accent}};
+				border-bottom-style: none;
+			}
+			#loadingOverlay {
+				display: none;
+				position: fixed;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				z-index: 3;
+				background-color : rgba(0, 0, 0, 0.65);
+			}
+			#loadingOverlay img {
+				width: 50%;
+				height: auto;
+			}
+			#loadingOverlay_body {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100%;
+				width: 100%;
+			}	
+		</style>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script>
+
+		function outError(err) {
+			// reset
+			document.getElementById("err00").setAttribute("style", "display: none;");
+			document.getElementById("err10").setAttribute("style", "display: none;");
+			document.getElementById("err20").setAttribute("style", "display: none;");
+			document.getElementById("err30").setAttribute("style", "display: none;");
+
+			// output error
+            document.getElementById(err).setAttribute("style", "display: flex;");
+            var name = document.getElementById(err).attributes.getNamedItem("for").value;
+            var inputClone = document.getElementById(name); var clone = inputClone.cloneNode(true);
+            inputClone.parentNode.replaceChild(clone, inputClone);
+            document.getElementById(name).setAttribute("class", "errorAnimate");
+            document.getElementById(name).focus();
+
+			document.getElementById("loadingOverlay").style.display = "none";
+		};
+
+		function submit() {
+
+			// local submit test
+			if (document.getElementById("inputForename").value.length == 0) {
+				outError("err00")
+				return;
+			} else if (document.getElementById("inputSurname").value.length == 0) {
+				outError("err10")
+				return;
+			} else if (document.getElementById("inputSchool").value.length == 0) {
+				outError("err20")
+				return;
+			} else if (document.getElementById("inputGrade").value.length == 0) {
+				outError("err30")
+				return;
+			}
+
+			// server submit test
+			document.getElementById("loadingOverlay").style.display = "block";
+			submitServer();
+			return false;
+		};
+		
+        function submitServer() {
+			$.ajax({
+				data : {
+					processtype: 'add',
+					forename : $('#inputForename').val(),
+					surname : $('#inputSurname').val(),
+					school : $('#inputSchool').val(),
+					grade : $('#inputGrade').val(),
+					mail : $('#inputMail').val(),
+					phone : $('#inputPhone').val()
+				},
+				type : 'POST',
+				success : function(data) {
+
+					if (data.error) {
+						outError(data.error)
+					}
+					else {
+						window.location.replace(data.visiturl);
+					}
+				}
+			});
+			return;
+		}
+		
+		</script>
+	</head>
+	<body>
+		<div id="loadingOverlay">
+			<div id="loadingOverlay_body">
+				<img src="{{url_for('static', filename='cave_anim.svg')}}"/>
+			</div>
+		</div>
+		<form method="POST">
+			<div id="loginform">
+				<div class="outerdivs">
+					<label for="inputForename">Vorname</label>
+					<label id="err00" class="errors" style="padding-top: 0;" for="inputForename">Der Vorname darf nicht leer sein!</label>
+					<input type="text" value="Max" name="forename" id="inputForename" required />
+				</div>
+				<div class="outerdivs">
+					<label for="inputSurname">Nachname</label>
+					<label id="err10" class="errors" style="padding-top: 0;" for="inputSurname">Der Nachname darf nicht leer sein!</label>
+					<input type="text" value="Mustermann" name="surname" id="inputSurname" required />
+				</div>
+				<div class="outerdivs">
+					<label for="inputSchool">Schule</label>
+					<label id="err20" class="errors" style="padding-top: 0;" for="inputSchool">Schule darf nicht leer sein!</label>
+					<input type="text" value="Carl-Friedrich-Gauss-Gymnasium" name="school" id="inputSchool" required />
+				</div>
+				<div class="outerdivs">
+					<label for="inputGrade">Klasse</label>
+					<label id="err30" class="errors" style="padding-top: 0;" for="inputGrade">Klasse darf nicht leer sein!</label>
+					<input type="text" value="1a" name="grade" id="inputGrade" required />
+				</div>
+				<div class="outerdivs">
+					<label for="inputMail">Email</label>
+					<input type="text" value="Maxmustermann@mustermail.com" name="mail" id="inputMail" placeholder="optional" />
+				</div>
+				<div class="outerdivs">
+					<label for="inputPhone">Telefonnummer</label>
+					<input type="text" value="017612345678" name="phone" id="inputPhone" placeholder="optional" />
+				</div>
+
+				
+				<div id="submitBtn" onclick="submit()">Schüler hinzufügen</div>
+			</div>
+			<a href="/student">Abbrechen</a>
+		</form>
+	</body>
+</html>
