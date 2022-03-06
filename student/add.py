@@ -13,11 +13,11 @@ with open('./templateColors.json', 'r') as file:
     global colorThemes
     colorThemes = json.loads(file.read())
 
-add = Blueprint("add", __name__, static_folder="static", template_folder="templates")
+studentAdd = Blueprint("studentAdd", __name__, static_folder="static", template_folder="templates")
 
 
-@add.route('/', methods=['GET', 'POST'])
-def add_():
+@studentAdd.route('/', methods=['GET', 'POST'])
+def studentAdd_():
     if request.method == 'POST':
         time.sleep(1)
         print(request.form)
@@ -42,8 +42,8 @@ def add_():
                                                                  phone=request.form["phone"]))
         current_app.db.session.commit()
 
-        return jsonify({'visiturl': '/student'})
+        return jsonify({'visiturl': '/student/list'})
 
     else:
-        return render_template('add.html',
+        return render_template('student/add.html',
                                **colorThemes['default'])

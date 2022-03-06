@@ -9,6 +9,8 @@ import database
 
 import accounts
 import student
+import timetable
+import docs
 
 Serverconfig = Serverconfig()
 
@@ -27,25 +29,32 @@ Session(app)
 socketio = SocketIO(app, manage_session=False,
                     cors_allowed_origins='*')  # cors_allowed_origins='*' is for session access
 
+app.register_blueprint(docs.docs.docs, url_prefix="/docs")
 app.register_blueprint(accounts.login.login, url_prefix="/login")
 app.register_blueprint(accounts.register.register, url_prefix="/register")
 app.register_blueprint(accounts.verify.verify, url_prefix="/verify")
-app.register_blueprint(student.add.add, url_prefix="/student/add")
+app.register_blueprint(student.add.studentAdd, url_prefix="/student/add")
 app.register_blueprint(student.list.studentList, url_prefix="/student/list")
+app.register_blueprint(timetable.add.timetableAdd, url_prefix="/timetable/add")
+app.register_blueprint(timetable.list.timetableList, url_prefix="/timetable/list")
 socketio.on_namespace(student.list.Socketio('/student/list'))
+socketio.on_namespace(timetable.list.Socketio('/timetable/list'))
 
 
 @app.route('/loginred')
 def loginred():
     return '<html><body> <form action="../login", method="GET"> <input tpye="text", name="redirect"/> <input type="submit" value="submit" /> </form> </body></html>'
 
+# URL NOT WORKING FIX LATER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+@app.route('/help')
+def help():
+    print("help")
+    return redirect("/docs")
 
-@app.route('/')
-def index():
-    if 'user_mail' in session:
-        return "Hallo " + escape(session['user_mail']) + '!'
-    else:
-        return "<h1>Sie sind nicht angemeldet!!</h1><a href='login'>Login</a>"
+# URL NOT WORKING FIX LATER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+@app.route('/hilfe')
+def hilfe():
+    return redirect("/docs")
 
 
 # @app.route('/favicon.ico')

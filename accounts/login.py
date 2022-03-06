@@ -19,7 +19,7 @@ def login_():
     if request.method == 'GET':
         if 'user_id' in session.keys():
             return f"moin {escape(session['username'])}"
-        return render_template('login.html',
+        return render_template('accounts/login.html',
                                redirect_url=url_for('login.login_'),
                                **colorThemes['default'])
     else:

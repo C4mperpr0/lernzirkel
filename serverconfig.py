@@ -6,10 +6,9 @@ import base64
 class Serverconfig:
     def __init__(self):
         standard = {'session_secret_key': os.urandom(24),
-                    'server_mail': {'user': '', 'password': '', 'address': 'smtp.gmail.com', 'port': 587},
                     'server_ip': '127.0.0.1',
                     'server_port': 8080,
-                    'debug': True,
+                    'debug': False,
                     'threading': True,
                     'fileuploadpath': r"/uploads"
                     }
@@ -23,6 +22,7 @@ class Serverconfig:
                         conf[attr] = standard[attr]
         else:
             conf = standard
+            print("CONFIG NOT SET! NEW CONFIG WAS SET, PLEASE EDIT TO MAKE SURE THE SERVER IS CONFIGURED PROPERLY! THIS WARNING WILL NOT BE SHOWN AGAIN.")
         self.config = conf
         self.save()
 

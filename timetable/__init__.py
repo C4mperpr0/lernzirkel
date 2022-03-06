@@ -1,1 +1,1 @@
-from . import table, teacher
+from . import add, list

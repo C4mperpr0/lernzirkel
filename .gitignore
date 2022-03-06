@@ -1,0 +1,5 @@
+lernzirkel.sqlite
+flask_session/
+serverconfig.json
+**/.idea
+**/__pycache__

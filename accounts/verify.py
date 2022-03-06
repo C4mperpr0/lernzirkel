@@ -18,7 +18,7 @@ def verify_():
         if 'u' not in request.args.keys():
             return redirect('/login')
         else:
-            return render_template('verify.html',
+            return render_template('accounts/verify.html',
                                    **colorThemes['default'])
     else:
         check_login = sqliteDB.check_login(current_app,

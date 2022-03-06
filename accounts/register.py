@@ -110,13 +110,13 @@ def register_():
         return jsonify({'visiturl': f'../register?userregistered={request.form["username"]}'})
 
     elif 'userregistered' in request.args.keys():
-        return render_template('showBigText.html',
+        return render_template('accounts/showBigText.html',
                                show_text=f'<p>Hello {escape(request.args.get("userregistered"))}, we have sent a verification email to you. Once you have activated your account, click <a href="/login">here</a> to login.</p>',
                                **colorThemes['default'])
     elif 'registrationDel' in request.args.keys():
-        return render_template('showBigText.html',
+        return render_template('accounts/showBigText.html',
                                show_text=f'<p>{escape(request.args.get("registrationDel"))} is now deleted from our system and the registration process is stopped. You can alway register again, if you want to.</p>',
                                **colorThemes['default'])
     else:
-        return render_template('register.html',
+        return render_template('accounts/register.html',
                                **colorThemes['default'])

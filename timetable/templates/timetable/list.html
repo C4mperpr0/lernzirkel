@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>Stundenplan</title>
+		
+		<style>
+			html, body {
+				font-family: 'Trebuchet MS', sans-serif;
+				color: {{font}};
+				height: 100%;
+				margin: 0;
+				user-select: none;
+			}
+			body {
+				background-color: {{dark}};
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			input[type=text], input[type=password] {
+				background-color: {{input}};
+				border: 3px solid {{accent}};
+				box-sizing: border-box;
+				border-top-style: none;
+				border-radius: 0.5vh;
+			}
+			.button {
+				background-color: {{input}};
+				color: {{font}};
+				cursor: pointer;
+				/*margin-top: 10%;*/
+				box-sizing: border-box;
+				border: 3px solid {{light}};
+				border-bottom-style: none;
+				border-radius: 0.5vh;
+				text-align: center;
+			}
+			.button:hover {
+				border: 3px solid {{accent}};
+				border-bottom-style: none;
+			}
+			input, label {
+				width: 100%;
+				padding: 10px;
+			}
+			a {
+				width: 100%;
+				text-align: center;
+				margin-top: 20px;
+				color: {{href}};
+				font-size: 14px;
+			}
+			.outerdivs {
+				display: flex;
+				flex-flow: row nowrap;
+
+				background-color: white;
+				width: 90%;
+				max-width: 90%;
+			}
+		</style>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" crossorigin="anonymous"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script>
+
+		var socket;
+		$(document).ready(function() {
+			//$('.week').each(function() {
+				//$(this).html('<div class="day" id="day' + $(this).attr('id').slice(4) + '"></div>');
+			//});
+
+			socket = io.connect('/timetable/list');
+
+			socket.on('connect', function() {
+				//socket.emit('fetch', {sort: 'student_creation', order: 'desc', limit: 100, offset: 0});
+				fetch_list();
+			});
+			
+			socket.on('update', function(data) {
+				//console.log(data);
+				return;
+			});
+		
+		});
+
+		function fetch_list(year, month) {
+			socket.emit('fetch', {year: $('#inputYear').val(), month: $('#inputMonth').val()});
+			console.log("fetched!")
+		};
+		
+		</script>
+	</head>
+	<body>
+		<div id="controlFetch">
+			<input id="inputYear" oninput="fetch_list()" value="2022"></input>
+			<input id="inputMonth" oninput="fetch_list()" value="2"></input>
+		</div>
+		<div class="outerdivs">			
+			<div class="week" id="week0">
+				<div class="day" id="day000"></div>
+				<div class="day" id="day001"></div>
+				<div class="day" id="day002"></div>
+				<div class="day" id="day003"></div>
+				<div class="day" id="day004"></div>
+				<div class="day" id="day005"></div>
+				<div class="day" id="day006"></div>
+			</div>
+			<div class="week" id="week1">
+				<div class="day" id="day010"></div>
+				<div class="day" id="day011"></div>
+				<div class="day" id="day012"></div>
+				<div class="day" id="day013"></div>
+				<div class="day" id="day014"></div>
+				<div class="day" id="day015"></div>
+				<div class="day" id="day016"></div>
+			</div>
+			<div class="week" id="week2">
+				<div class="day" id="day020"></div>
+				<div class="day" id="day021"></div>
+				<div class="day" id="day022"></div>
+				<div class="day" id="day023"></div>
+				<div class="day" id="day024"></div>
+				<div class="day" id="day025"></div>
+				<div class="day" id="day026"></div>
+			</div>
+			<div class="week" id="week3">
+				<div class="day" id="day030"></div>
+				<div class="day" id="day031"></div>
+				<div class="day" id="day032"></div>
+				<div class="day" id="day033"></div>
+				<div class="day" id="day034"></div>
+				<div class="day" id="day035"></div>
+				<div class="day" id="day036"></div>
+			</div>
+			<div class="week" id="week4">
+				<div class="day" id="day040"></div>
+				<div class="day" id="day041"></div>
+				<div class="day" id="day042"></div>
+				<div class="day" id="day043"></div>
+				<div class="day" id="day044"></div>
+				<div class="day" id="day045"></div>
+				<div class="day" id="day046"></div>
+			</div>
+			<div class="week" id="week5">
+				<div class="day" id="day050"></div>
+				<div class="day" id="day051"></div>
+				<div class="day" id="day052"></div>
+				<div class="day" id="day053"></div>
+				<div class="day" id="day054"></div>
+				<div class="day" id="day055"></div>
+				<div class="day" id="day056"></div>
+			</div>
+		<div>
+	</body>
+</html>
