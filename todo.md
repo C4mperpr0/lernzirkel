@@ -1,0 +1,6 @@
+- sftp over ssh
+- static internal lan ip
+- local hostname? Link on original webpage?
+- fileupload and DB integration
+- login and accounts - wie verification neuer Accounts? Physischer Knopf an Pi oder admin Prinzip?
+- dashboard
