@@ -33,19 +33,16 @@ class Socketio(Namespace):
         if not query['year'].isdigit() or not query['month'].isdigit():
             return
 
-        init_day = datetime.datetime(int(query['year']), int(query['month']), 1).strftime("%w")
-
-        print(query)
-
-        print(f"{query['year']}-{int(query['month']):02}-01")
-        print(f"{query['year'] if int(query['month']) < 12 else int(query['year']) + 1}-{(int(query['month']) + 1 if int(query['month']) < 12 else 1):02}-01")
+        init_day = datetime.datetime(int(query['year']), int(query['month']), 1).weekday()
 
         data = current_app.DbClasses.Timetable.query.filter(current_app.DbClasses.Timetable.date.between(f"{query['year']}-{int(query['month']):02}-01",  f"{query['year'] if int(query['month']) < 12 else int(query['year']) + 1}-{(int(query['month']) + 1 if int(query['month']) < 12 else 1):02}-01")).order_by(current_app.DbClasses.Timetable.date.asc()).all()
 
         print(data)
 
 
-        emit('update', {'data': [t.as_dict(date_as_string=True) for t in data] if len(data) != 0 else []})
+        emit('update', {'data': [t.as_dict(date_as_string=True) for t in data] if len(data) != 0 else [],
+        'init_day': init_day,
+        'month_length': calendar.monthrange(int(query['year']), int(query['month']))[1]})
 
         """
         if query['search'] != '':

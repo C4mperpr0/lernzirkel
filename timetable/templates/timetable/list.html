@@ -4,7 +4,7 @@
 		<meta charset='utf-8'>
 		<title>Stundenplan</title>
 		
-		<style>
+		<style> 
 			html, body {
 				font-family: 'Trebuchet MS', sans-serif;
 				color: {{font}};
@@ -54,18 +54,39 @@
 			.outerdivs {
 				display: flex;
 				flex-flow: row nowrap;
-
-				background-color: white;
 				width: 90%;
 				max-width: 90%;
 			}
+			#timetable {
+				display: flex;
+				flex-flow: column nowrap;
+				width: 100%;
+			} 
+			.day, .weekheader {
+				height: 40px;
+				width: 40px;
+				border: 5px solid {{accent}};
+				background-color: {{light}};
+			}
+			.week {
+				display: flex;
+				flex-flow: row nowrap;
+				width: 100%;
+			}
+			.weekheader {
+				background-color: yellowgreen;
+				font-size: 24px;
+			}
 		</style>
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" crossorigin="anonymous"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="{{url_for('static', filename='socketio_4.4.1.js')}}" crossorigin="anonymous"></script>
+		<script src="{{url_for('static', filename='jquery_3.2.1.js')}}"></script>
 		<script>
 
 		var socket;
+		var init_day = 0;
+		var month_length = 31;
+		var database = {};
 		$(document).ready(function() {
 			//$('.week').each(function() {
 				//$(this).html('<div class="day" id="day' + $(this).attr('id').slice(4) + '"></div>');
@@ -79,7 +100,18 @@
 			});
 			
 			socket.on('update', function(data) {
-				//console.log(data);
+
+				jQuery('.day').each(function() {
+					$(this).html('');
+				});
+
+				init_day = data.init_day;
+				month_length = data.month_length;
+				console.log(data);
+				for (let d = 0; d <= month_length; d++) {
+					$(id_by_day(d)).html(d+1);
+				}
+				
 				return;
 			});
 		
@@ -87,7 +119,13 @@
 
 		function fetch_list(year, month) {
 			socket.emit('fetch', {year: $('#inputYear').val(), month: $('#inputMonth').val()});
-			console.log("fetched!")
+		};
+
+		function id_by_day(day) {
+			if (day < 0) {
+				return null;
+			}
+			return "#day0" + Math.floor((day + init_day) / 7) + ((day + init_day) % 7);
 		};
 		
 		</script>
@@ -97,61 +135,72 @@
 			<input id="inputYear" oninput="fetch_list()" value="2022"></input>
 			<input id="inputMonth" oninput="fetch_list()" value="2"></input>
 		</div>
-		<div class="outerdivs">			
-			<div class="week" id="week0">
-				<div class="day" id="day000"></div>
-				<div class="day" id="day001"></div>
-				<div class="day" id="day002"></div>
-				<div class="day" id="day003"></div>
-				<div class="day" id="day004"></div>
-				<div class="day" id="day005"></div>
-				<div class="day" id="day006"></div>
+		<div class="outerdivs">	
+			<div id="timetable">
+				<div class="week" id="weekheader">
+					<div class="weekheader" id="weekheader0">Mo</div>
+					<div class="weekheader" id="weekheader1">Di</div>
+					<div class="weekheader" id="weekheader2">Mi</div>
+					<div class="weekheader" id="weekheader3">Do</div>
+					<div class="weekheader" id="weekheader4">Fr</div>
+					<div class="weekheader" id="weekheader5">Sa</div>
+					<div class="weekheader" id="weekheader6">So</div>
+				</div>
+				<div class="week" id="week0">
+					<div class="day" id="day000"></div>
+					<div class="day" id="day001"></div>
+					<div class="day" id="day002"></div>
+					<div class="day" id="day003"></div>
+					<div class="day" id="day004"></div>
+					<div class="day" id="day005"></div>
+					<div class="day" id="day006"></div>
+				</div>
+				<div class="week" id="week1">
+					<div class="day" id="day010"></div>
+					<div class="day" id="day011"></div>
+					<div class="day" id="day012"></div>
+					<div class="day" id="day013"></div>
+					<div class="day" id="day014"></div>
+					<div class="day" id="day015"></div>
+					<div class="day" id="day016"></div>
+				</div>
+				<div class="week" id="week2">
+					<div class="day" id="day020"></div>
+					<div class="day" id="day021"></div>
+					<div class="day" id="day022"></div>
+					<div class="day" id="day023"></div>
+					<div class="day" id="day024"></div>
+					<div class="day" id="day025"></div>
+					<div class="day" id="day026"></div>
+				</div>
+				<div class="week" id="week3">
+					<div class="day" id="day030"></div>
+					<div class="day" id="day031"></div>
+					<div class="day" id="day032"></div>
+					<div class="day" id="day033"></div>
+					<div class="day" id="day034"></div>
+					<div class="day" id="day035"></div>
+					<div class="day" id="day036"></div>
+				</div>
+				<div class="week" id="week4">
+					<div class="day" id="day040"></div>
+					<div class="day" id="day041"></div>
+					<div class="day" id="day042"></div>
+					<div class="day" id="day043"></div>
+					<div class="day" id="day044"></div>
+					<div class="day" id="day045"></div>
+					<div class="day" id="day046"></div>
+				</div>
+				<div class="week" id="week5">
+					<div class="day" id="day050"></div>
+					<div class="day" id="day051"></div>
+					<div class="day" id="day052"></div>
+					<div class="day" id="day053"></div>
+					<div class="day" id="day054"></div>
+					<div class="day" id="day055"></div>
+					<div class="day" id="day056"></div>
+				</div>
 			</div>
-			<div class="week" id="week1">
-				<div class="day" id="day010"></div>
-				<div class="day" id="day011"></div>
-				<div class="day" id="day012"></div>
-				<div class="day" id="day013"></div>
-				<div class="day" id="day014"></div>
-				<div class="day" id="day015"></div>
-				<div class="day" id="day016"></div>
-			</div>
-			<div class="week" id="week2">
-				<div class="day" id="day020"></div>
-				<div class="day" id="day021"></div>
-				<div class="day" id="day022"></div>
-				<div class="day" id="day023"></div>
-				<div class="day" id="day024"></div>
-				<div class="day" id="day025"></div>
-				<div class="day" id="day026"></div>
-			</div>
-			<div class="week" id="week3">
-				<div class="day" id="day030"></div>
-				<div class="day" id="day031"></div>
-				<div class="day" id="day032"></div>
-				<div class="day" id="day033"></div>
-				<div class="day" id="day034"></div>
-				<div class="day" id="day035"></div>
-				<div class="day" id="day036"></div>
-			</div>
-			<div class="week" id="week4">
-				<div class="day" id="day040"></div>
-				<div class="day" id="day041"></div>
-				<div class="day" id="day042"></div>
-				<div class="day" id="day043"></div>
-				<div class="day" id="day044"></div>
-				<div class="day" id="day045"></div>
-				<div class="day" id="day046"></div>
-			</div>
-			<div class="week" id="week5">
-				<div class="day" id="day050"></div>
-				<div class="day" id="day051"></div>
-				<div class="day" id="day052"></div>
-				<div class="day" id="day053"></div>
-				<div class="day" id="day054"></div>
-				<div class="day" id="day055"></div>
-				<div class="day" id="day056"></div>
-			</div>
-		<div>
+		</div>
 	</body>
 </html>

@@ -15,8 +15,14 @@ with open('./templateColors.json', 'r') as file:
 studentInfo = Blueprint("info", __name__, static_folder="static", template_folder="templates/student")
 
 
-@studentInfo.route('/<string:studentname>', methods=['GET', 'POST'])
-def studentInfo_():
-    print(studentname)
+@studentInfo.route('/<int:studentid>', methods=['GET', 'POST'])
+def studentInfo_(studentid):
+    print(studentid)
+    data = current_app.DbClasses.Student.query.filter(current_app.DbClasses.Student.id == studentid).one_or_none()
+    print(data)
+    return f"<h1>Da number is {studentid} for {data}</h1>"
+
+"""
     return render_template('info.html',
                            **colorThemes['default'])
+"""
