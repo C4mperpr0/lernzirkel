@@ -19,15 +19,18 @@ with open('./templateColors.json', 'r') as file:
     global colorThemes
     colorThemes = json.loads(file.read())
 
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
+    database.init_app(app)
+    app.config['SECRET_KEY'] = Serverconfig.config['session_secret_key']
+    app.config['SESSION_TYPE'] = 'filesystem'
+    Session(app)
+    socketio = SocketIO(app, manage_session=False,
+                        logger=True,
+                        cors_allowed_origins='*')  # cors_allowed_origins='*' is for session access
+    return app, socketio
 
-database.init_app(app)
-
-app.config['SECRET_KEY'] = Serverconfig.config['session_secret_key']
-app.config['SESSION_TYPE'] = 'filesystem'
-Session(app)
-socketio = SocketIO(app, manage_session=False,
-                    cors_allowed_origins='*')  # cors_allowed_origins='*' is for session access
+app, socketio = create_app()
 
 app.register_blueprint(docs.docs.docs, url_prefix="/docs")
 app.register_blueprint(accounts.login.login, url_prefix="/login")
