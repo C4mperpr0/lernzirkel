@@ -77,6 +77,9 @@
 				background-color: yellowgreen;
 				font-size: 24px;
 			}
+			#dayinfo {
+				background-color: white;
+			}
 		</style>
 
 		<script src="{{url_for('static', filename='socketio_4.4.1.js')}}" crossorigin="anonymous"></script>
@@ -91,6 +94,9 @@
 			//$('.week').each(function() {
 				//$(this).html('<div class="day" id="day' + $(this).attr('id').slice(4) + '"></div>');
 			//});
+			$(".day").click(function() {
+				console.log(day_by_id(this.id));
+			})
 
 			socket = io.connect('/timetable/list');
 
@@ -100,17 +106,21 @@
 			});
 			
 			socket.on('update', function(data) {
-
-				jQuery('.day').each(function() {
-					$(this).html('');
-				});
-
+				console.log(data);
+				
 				init_day = data.init_day;
 				month_length = data.month_length;
-				console.log(data);
-				for (let d = 0; d < month_length; d++) {
-					$(id_by_day(d)).html(d+1);
-				}
+
+				$('.day').each(function() {
+					console.log(this.id);
+					$(this).html(day_by_id(this.id).day);
+					$(this).css("background-color", "{{light}}");
+				});
+
+				$.each(data.data, function(key, d) {
+					console.log(d.date);
+					$(id_by_day(d.date.day-1, 0)).css("background-color", "red");
+				});
 				
 				return;
 			});
@@ -121,12 +131,34 @@
 			socket.emit('fetch', {year: $('#inputYear').val(), month: $('#inputMonth').val()});
 		};
 
-		function id_by_day(day) {
+		function id_by_day(day, month) {
 			if (day < 0) {
 				return null;
 			}
-			return "#day0" + Math.floor((day + init_day) / 7) + ((day + init_day) % 7);
+			else if (month === -1) {
+				return "#day" + day;
+			}
+			else if (month === 0) {
+				return "#day" + (day + init_day);
+			}
+			else if (month === 1) {
+				return "#day" + (day + init_day + month_length)
+			}
+			return null;
 		};
+
+		function day_by_id(id) {
+			grid_id = Number(id.slice(3)) + 1;
+			if (grid_id > init_day + month_length) {
+				return {month: 1, day: grid_id - init_day - month_length};
+			}
+			else if (grid_id > init_day) {
+				return {month: 0, day: grid_id - init_day};
+			}
+			else {
+				return {month: -1, day: grid_id};
+			}
+		}
 		
 		</script>
 	</head>
@@ -147,60 +179,63 @@
 					<div class="weekheader" id="weekheader6">So</div>
 				</div>
 				<div class="week" id="week0">
-					<div class="day" id="day000"></div>
-					<div class="day" id="day001"></div>
-					<div class="day" id="day002"></div>
-					<div class="day" id="day003"></div>
-					<div class="day" id="day004"></div>
-					<div class="day" id="day005"></div>
-					<div class="day" id="day006"></div>
+					<div class="day" id="day0"></div>
+					<div class="day" id="day1"></div>
+					<div class="day" id="day2"></div>
+					<div class="day" id="day3"></div>
+					<div class="day" id="day4"></div>
+					<div class="day" id="day5"></div>
+					<div class="day" id="day6"></div>
 				</div>
 				<div class="week" id="week1">
-					<div class="day" id="day010"></div>
-					<div class="day" id="day011"></div>
-					<div class="day" id="day012"></div>
-					<div class="day" id="day013"></div>
-					<div class="day" id="day014"></div>
-					<div class="day" id="day015"></div>
-					<div class="day" id="day016"></div>
+					<div class="day" id="day7"></div>
+					<div class="day" id="day8"></div>
+					<div class="day" id="day9"></div>
+					<div class="day" id="day10"></div>
+					<div class="day" id="day11"></div>
+					<div class="day" id="day12"></div>
+					<div class="day" id="day13"></div>
 				</div>
 				<div class="week" id="week2">
-					<div class="day" id="day020"></div>
-					<div class="day" id="day021"></div>
-					<div class="day" id="day022"></div>
-					<div class="day" id="day023"></div>
-					<div class="day" id="day024"></div>
-					<div class="day" id="day025"></div>
-					<div class="day" id="day026"></div>
+					<div class="day" id="day14"></div>
+					<div class="day" id="day15"></div>
+					<div class="day" id="day16"></div>
+					<div class="day" id="day17"></div>
+					<div class="day" id="day18"></div>
+					<div class="day" id="day19"></div>
+					<div class="day" id="day20"></div>
 				</div>
 				<div class="week" id="week3">
-					<div class="day" id="day030"></div>
-					<div class="day" id="day031"></div>
-					<div class="day" id="day032"></div>
-					<div class="day" id="day033"></div>
-					<div class="day" id="day034"></div>
-					<div class="day" id="day035"></div>
-					<div class="day" id="day036"></div>
+					<div class="day" id="day21"></div>
+					<div class="day" id="day22"></div>
+					<div class="day" id="day23"></div>
+					<div class="day" id="day24"></div>
+					<div class="day" id="day25"></div>
+					<div class="day" id="day26"></div>
+					<div class="day" id="day27"></div>
 				</div>
 				<div class="week" id="week4">
-					<div class="day" id="day040"></div>
-					<div class="day" id="day041"></div>
-					<div class="day" id="day042"></div>
-					<div class="day" id="day043"></div>
-					<div class="day" id="day044"></div>
-					<div class="day" id="day045"></div>
-					<div class="day" id="day046"></div>
+					<div class="day" id="day28"></div>
+					<div class="day" id="day29"></div>
+					<div class="day" id="day30"></div>
+					<div class="day" id="day31"></div>
+					<div class="day" id="day32"></div>
+					<div class="day" id="day33"></div>
+					<div class="day" id="day34"></div>
 				</div>
 				<div class="week" id="week5">
-					<div class="day" id="day050"></div>
-					<div class="day" id="day051"></div>
-					<div class="day" id="day052"></div>
-					<div class="day" id="day053"></div>
-					<div class="day" id="day054"></div>
-					<div class="day" id="day055"></div>
-					<div class="day" id="day056"></div>
+					<div class="day" id="day35"></div>
+					<div class="day" id="day36"></div>
+					<div class="day" id="day37"></div>
+					<div class="day" id="day38"></div>
+					<div class="day" id="day39"></div>
+					<div class="day" id="day40"></div>
+					<div class="day" id="day41"></div>
 				</div>
 			</div>
+		</div>
+		<div id="dayinfo">
+
 		</div>
 	</body>
 </html>

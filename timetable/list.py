@@ -39,8 +39,18 @@ class Socketio(Namespace):
 
         print(data)
 
+        data2 = current_app.DbClasses.TimetableRegular.query.all()
+        print("---------DATA2 --------")
+        print(len(data))
+        print(len(data2))
+        #print([t.as_timetable(int(query['year']), int(query['month']), date_as_json=True) for t in data2] if len(data2) != 0 else [])
+        timetable_from_regular = []
+        for t in data2:
+            timetable_from_regular += t.as_timetable(int(query['year']), int(query['month']), date_as_json=True)
+        print("---------DATA2 end ----")
 
-        emit('update', {'data': [t.as_dict(date_as_string=True) for t in data] if len(data) != 0 else [],
+        
+        emit('update', {'data': ([t.as_dict(date_as_json=True) for t in data] if len(data) != 0 else []) + timetable_from_regular,
         'init_day': init_day,
         'month_length': calendar.monthrange(int(query['year']), int(query['month']))[1]})
 
