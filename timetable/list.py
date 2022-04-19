@@ -30,7 +30,7 @@ class Socketio(Namespace):
         print(query)
         if any([k not in query.keys() for k in ['year', 'month']]):
             return
-        if not query['year'].isdigit() or not query['month'].isdigit():
+        if not query['year'].isdigit() or not query['month'].isdigit() or not (0 < int(query['month']) < 13):
             return
 
         init_day = datetime.datetime(int(query['year']), int(query['month']), 1).weekday()
@@ -52,7 +52,9 @@ class Socketio(Namespace):
         
         emit('update', {'data': ([t.as_dict(date_as_json=True) for t in data] if len(data) != 0 else []) + timetable_from_regular,
         'init_day': init_day,
-        'month_length': calendar.monthrange(int(query['year']), int(query['month']))[1]})
+        'month_length': calendar.monthrange(int(query['year']), int(query['month']))[1],
+        'year': int(query['year']),
+        'month': int(query['month'])})
 
         """
         if query['search'] != '':

@@ -87,13 +87,9 @@
 		<script>
 
 		var socket;
-		var init_day = 0;
-		var month_length = 31;
 		var database = {};
+		var cur_months = [];
 		$(document).ready(function() {
-			//$('.week').each(function() {
-				//$(this).html('<div class="day" id="day' + $(this).attr('id').slice(4) + '"></div>');
-			//});
 			$(".day").click(function() {
 				console.log(day_by_id(this.id));
 			})
@@ -108,27 +104,69 @@
 			socket.on('update', function(data) {
 				console.log(data);
 				
-				init_day = data.init_day;
-				month_length = data.month_length;
-
-				$('.day').each(function() {
-					console.log(this.id);
-					$(this).html(day_by_id(this.id).day);
-					$(this).css("background-color", "{{light}}");
-				});
-
-				$.each(data.data, function(key, d) {
-					console.log(d.date);
-					$(id_by_day(d.date.day-1, 0)).css("background-color", "red");
-				});
+				database[data.year.toString() + "_" + data.month.toString()] = {init_day: data.init_day, month_length: data.month_length, data: data.data};
 				
+				update_calendar();
+
 				return;
 			});
 		
 		});
 
+		function update_calendar() {
+			if (cur_months[0] in database && cur_months[1] in database && cur_months[2] in database) {
+				$('.day').each(function() {
+					$(this).html(day_by_id(this.id).day);
+					$(this).css("background-color", "{{light}}");
+				});
+
+				$.each(database[cur_months[1]].data, function(key, d) {
+					$(id_by_day(d.date.day-1, 0)).css("background-color", "red");
+				});
+			}
+		}
+
 		function fetch_list(year, month) {
-			socket.emit('fetch', {year: $('#inputYear').val(), month: $('#inputMonth').val()});
+			year = Number($('#inputYear').val());
+			month = Number($('#inputMonth').val());
+			if (month === 1) {
+				month_before = (year - 1).toString() + "_12";
+			}
+			else {
+				month_before = year.toString() + "_" + (month - 1).toString();
+			}
+			if (month === 12) {
+				month_after = (year + 1).toString() + "_1";
+			}
+			else {
+				month_after = year.toString() + "_" + (month + 1).toString();
+			}
+			cur_months = [month_before, (year.toString() + "_" + month.toString()), month_after];
+			console.log(cur_months);
+
+			local_update = 0 // if reaches 3 (all 3 datasets available local) it will trigger gui update, else it will wait for missing package to trigger update
+			if (month_before in database) {
+				local_update++;
+			}
+			else {
+				socket.emit('fetch', {year: month_before.split('_')[0], month: month_before.split('_')[1]});
+			}
+			if (cur_months[1] in database) {
+				local_update++;
+			}
+			else {
+				socket.emit('fetch', {year: year.toString(), month: month.toString()});
+			}
+			if (month_after in database) {
+				local_update++;
+			}
+			else {
+				socket.emit('fetch', {year: month_after.split('_')[0], month: month_after.split('_')[1]});
+			}			
+			
+			if (local_update === 3) {
+				update_calendar();
+			}
 		};
 
 		function id_by_day(day, month) {
@@ -139,24 +177,24 @@
 				return "#day" + day;
 			}
 			else if (month === 0) {
-				return "#day" + (day + init_day);
+				return "#day" + (day + database[cur_months[1]].init_day);
 			}
 			else if (month === 1) {
-				return "#day" + (day + init_day + month_length)
+				return "#day" + (day + database[cur_months[1]].init_day + database[cur_months[1]].month_length)
 			}
 			return null;
 		};
 
 		function day_by_id(id) {
 			grid_id = Number(id.slice(3)) + 1;
-			if (grid_id > init_day + month_length) {
-				return {month: 1, day: grid_id - init_day - month_length};
+			if (grid_id > database[cur_months[1]].init_day + database[cur_months[1]].month_length) {
+				return {month: 1, day: grid_id - database[cur_months[1]].init_day - database[cur_months[1]].month_length};
 			}
-			else if (grid_id > init_day) {
-				return {month: 0, day: grid_id - init_day};
+			else if (grid_id > database[cur_months[1]].init_day) {
+				return {month: 0, day: grid_id - database[cur_months[1]].init_day};
 			}
 			else {
-				return {month: -1, day: grid_id};
+				return {month: -1, day: database[cur_months[0]].month_length - database[cur_months[1]].init_day + grid_id + 1};
 			}
 		}
 		
@@ -179,8 +217,8 @@
 					<div class="weekheader" id="weekheader6">So</div>
 				</div>
 				<div class="week" id="week0">
-					<div class="day" id="day0"></div>
 					<div class="day" id="day1"></div>
+					<div class="day" id="day0"></div>
 					<div class="day" id="day2"></div>
 					<div class="day" id="day3"></div>
 					<div class="day" id="day4"></div>
