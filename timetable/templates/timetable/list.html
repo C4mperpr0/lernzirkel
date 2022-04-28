@@ -194,7 +194,7 @@
 				return {month: 0, day: grid_id - database[cur_months[1]].init_day};
 			}
 			else {
-				return {month: -1, day: database[cur_months[0]].month_length - database[cur_months[1]].init_day + grid_id + 1};
+				return {month: -1, day: database[cur_months[0]].month_length - database[cur_months[1]].init_day + grid_id};
 			}
 		}
 		
@@ -203,7 +203,7 @@
 	<body>
 		<div id="controlFetch">
 			<input id="inputYear" oninput="fetch_list()" value="2022"></input>
-			<input id="inputMonth" oninput="fetch_list()" value="2"></input>
+			<input id="inputMonth" oninput="fetch_list()" value="4"></input>
 		</div>
 		<div class="outerdivs">	
 			<div id="timetable">
@@ -217,8 +217,8 @@
 					<div class="weekheader" id="weekheader6">So</div>
 				</div>
 				<div class="week" id="week0">
-					<div class="day" id="day1"></div>
 					<div class="day" id="day0"></div>
+					<div class="day" id="day1"></div>
 					<div class="day" id="day2"></div>
 					<div class="day" id="day3"></div>
 					<div class="day" id="day4"></div>
