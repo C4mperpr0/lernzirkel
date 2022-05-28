@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
+import hashlib
 
 def init_app(app):
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///lernzirkel.sqlite'
@@ -24,6 +25,25 @@ def init_app(app):
 
         def __repr__(self):
             return f"{(self.forename + ' ' + self.surname).replace(' ', '_')}#{self.id}"
+
+    class Teacher(db.Model):
+        id = db.Column(db.Integer(), primary_key=True, nullable=False)
+        forename = db.Column(db.String(), nullable=False)
+        surname = db.Column(db.String(), nullable=False)
+        admin = db.Column(db.Boolean(), default=False)
+        verified = db.Column(db.Boolean(), default=False)
+        password = db.Column(db.String(), nullable=False)
+        subjects = db.Column(db.String(), default=None)
+        mail = db.Column(db.String(), default=None)
+        phone = db.Column(db.String(), default=None)
+        teacher_creation = db.Column(db.DateTime, default=datetime.now())
+
+        def check_login(self, password):
+            if hashlib.sha512(password.encode("utf8")).hexdigest() == self.password:
+                return True
+            else:
+                return False
+
 
     class Timetable(db.Model):
         id = db.Column(db.Integer(), primary_key=True, nullable=False)
@@ -77,6 +97,7 @@ def init_app(app):
     class DbClasses:
         def __init__(self):
             self.Student = Student
+            self.Teacher = Teacher
             self.Timetable = Timetable
             self.TimetableRegular = TimetableRegular
 

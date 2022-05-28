@@ -19,7 +19,7 @@ timetableList = Blueprint("timetableList", __name__, static_folder="static", tem
 
 @timetableList.route('/', methods=['GET', 'POST'])
 def timetableList_():
-    return render_template('timetable/list.html',
+    return render_template('timetable/list.html'
                            **colorThemes['default'])
 
 

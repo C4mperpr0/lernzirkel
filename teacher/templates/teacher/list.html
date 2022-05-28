@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset='utf-8'>
-		<title>Schülerliste</title>
+		<title>Lehrerliste</title>
 		
 		<style>
 			html, body {
@@ -59,19 +59,19 @@
 				width: 90%;
 				max-width: 90%;
 			}
-			.student_attr {
+			.teacher_attr {
 				display: flex;
 				flex-flow: column nowrap;
 				/*width: 16.666%;*/
 				/*max-width: 16.666%;*/
 			}/*
-			.student_grade {
+			.teacher_grade {
 				width: 5%;
 			}
-			.student_name {
+			.teacher_name {
 				width: 25%;
 			}*/
-			.student {
+			.teacher {
 				padding-left: 10px;
 				padding-right: 10px;
 				overflow: hidden;
@@ -88,35 +88,31 @@
 
 		$(document).ready(function() {
 		
-			socket = io.connect('/student/list');
+			socket = io.connect('/teacher/list');
 
 			socket.on('connect', function() {
-				//socket.emit('fetch', {sort: 'student_creation', order: 'desc', limit: 100, offset: 0});
+				//socket.emit('fetch', {sort: 'teacher_creation', order: 'desc', limit: 100, offset: 0});
 				fetch_list();
 			});
 			
 			socket.on('update', function(data) {
-				$(".student_name")[0].innerHTML = '';
-				$(".student_school")[0].innerHTML = '';
-				$(".student_grade")[0].innerHTML = '';
-				$(".student_mail")[0].innerHTML = '';
-				$(".student_phone")[0].innerHTML = '';
-				$(".student_creation")[0].innerHTML = '';
+				$(".teacher_name")[0].innerHTML = '';
+				$(".teacher_subjects")[0].innerHTML = '';
+				$(".teacher_mail")[0].innerHTML = '';
+				$(".teacher_phone")[0].innerHTML = '';
 				for ( let s = 0; s < data.data.length; s++ ) {
 					cur_s = data.data[s];
-					$(".student_name")[0].innerHTML += '<div class="student" onclick="window.open(\'{{url_for("studentInfo.studentInfo_", studentid=1)}}\')">' + cur_s.surname + ', ' + cur_s.forename + '</div>';
-					$(".student_school")[0].innerHTML += '<div class="student">' + cur_s.school + '</div>';
-					$(".student_grade")[0].innerHTML += '<div class="student">' + cur_s.grade + '</div>';
-					$(".student_mail")[0].innerHTML += '<div class="student">' + cur_s.mail + '</div>';
-					$(".student_phone")[0].innerHTML += '<div class="student">' + cur_s.phone + '</div>';
-					$(".student_creation")[0].innerHTML += '<div class="student">' + cur_s.student_creation + '</div>';
+					$(".teacher_name")[0].innerHTML += '<div class="teacher" onclick="window.open(\'{{url_for("teacherInfo.teacherInfo_", teacherid=0)}}\')">' + cur_s.surname + ', ' + cur_s.forename + '</div>';
+					$(".teacher_subjects")[0].innerHTML += '<div class="teacher">' + cur_s.subjects + '</div>';
+					$(".teacher_mail")[0].innerHTML += '<div class="teacher">' + cur_s.mail + '</div>';
+					$(".teacher_phone")[0].innerHTML += '<div class="teacher">' + cur_s.phone + '</div>';
 				}
 			});
 		
 		});
 
 		function fetch_list(sort, search, order) {
-			sort = sort || 'student_creation';
+			sort = sort || 'teacher_creation';
 			search = search || '';
 			order = order || 'desc';
 			socket.emit('fetch', {sort: sort, order: order, search: search, limit: 100, offset: 0});
@@ -127,35 +123,12 @@
 	<body>
 		<div id="controlFetch">
 			<input id="inputSearch" oninput="fetch_list('forename', this.value)"></input>
-			<div id="sort_name" onclick="fetch_list('forename')">
-				forename
-			</div>
-			<div id="sort_name" onclick="fetch_list('surname')">
-				surname
-			</div>
-			<div id="sort_school" onclick="fetch_list('school')">
-				school
-			</div>
-			<div id="sort_grade" onclick="fetch_list('grade')">
-				grade
-			</div>
-			<div id="sort_mail" onclick="fetch_list('mail')">
-				mail
-			</div>
-			<div id="sort_phone" onclick="fetch_list('phone')">
-				phone
-			</div>
-			<div id="sort_creation" onclick="fetch_list('student_creation')">
-				creation
-			</div>
 		</div>
 		<div class="outerdivs">			
-			<div class="student_name student_attr"></div>
-			<div class="student_school student_attr"></div>
-			<div class="student_grade student_attr"></div>
-			<div class="student_mail student_attr"></div>
-			<div class="student_phone student_attr"></div>
-			<div class="student_creation student_attr"></div>
+			<div class="teacher_name teacher_attr"></div>
+			<div class="teacher_subjects teacher_attr"></div>
+			<div class="teacher_mail teacher_attr"></div>
+			<div class="teacher_phone teacher_attr"></div>
 		<div>
 	</body>
 </html>

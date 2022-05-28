@@ -14,12 +14,12 @@ with open('./templateColors.json', 'r') as file:
     global colorThemes
     colorThemes = json.loads(file.read())
 
-studentList = Blueprint("list", __name__, static_folder="static", template_folder="templates")
+teacherList = Blueprint("teacherList", __name__, static_folder="static", template_folder="templates")
 
 
-@studentList.route('/', methods=['GET', 'POST'])
-def studentList_():
-    return render_template('student/list.html',
+@teacherList.route('/', methods=['GET', 'POST'])
+def teacherList_():
+    return render_template('teacher/list.html',
                            **colorThemes['default'])
 
 

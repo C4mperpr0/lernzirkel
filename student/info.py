@@ -12,7 +12,7 @@ with open('./templateColors.json', 'r') as file:
     global colorThemes
     colorThemes = json.loads(file.read())
 
-studentInfo = Blueprint("info", __name__, static_folder="static", template_folder="templates/student")
+studentInfo = Blueprint("studentInfo", __name__, static_folder="static", template_folder="templates")
 
 
 @studentInfo.route('/<int:studentid>', methods=['GET', 'POST'])
@@ -23,6 +23,6 @@ def studentInfo_(studentid):
     return f"<h1>Da number is {studentid} for {data}</h1>"
 
 """
-    return render_template('info.html',
+    return render_template('student/info.html',
                            **colorThemes['default'])
 """

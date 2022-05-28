@@ -2,12 +2,13 @@ from flask import *
 from flask_socketio import SocketIO
 import json
 import os
+import datetime
 
 from serverconfig import Serverconfig
 from flask_session import Session
 import database
 
-import accounts
+import teacher
 import student
 import timetable
 import docs
@@ -33,9 +34,9 @@ def create_app():
 app, socketio = create_app()
 
 app.register_blueprint(docs.docs.docs, url_prefix="/docs")
-app.register_blueprint(accounts.login.login, url_prefix="/login")
-app.register_blueprint(accounts.register.register, url_prefix="/register")
-app.register_blueprint(accounts.verify.verify, url_prefix="/verify")
+app.register_blueprint(teacher.add.teacherAdd, url_prefix="/teacher/add")
+app.register_blueprint(teacher.list.teacherList, url_prefix="/teacher/list")
+app.register_blueprint(teacher.info.teacherInfo, url_prefix="/teacher/info")
 app.register_blueprint(student.add.studentAdd, url_prefix="/student/add")
 app.register_blueprint(student.list.studentList, url_prefix="/student/list")
 app.register_blueprint(student.info.studentInfo, url_prefix="/student/info")

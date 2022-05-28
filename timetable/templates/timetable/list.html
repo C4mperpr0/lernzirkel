@@ -60,7 +60,9 @@
 			#timetable {
 				display: flex;
 				flex-flow: column nowrap;
+				justify-content: space-between;
 				width: 100%;
+				height: 100%;
 			} 
 			.day, .weekheader {
 				height: 40px;
@@ -71,14 +73,36 @@
 			.week {
 				display: flex;
 				flex-flow: row nowrap;
+				justify-content: space-between;
 				width: 100%;
 			}
 			.weekheader {
 				background-color: yellowgreen;
 				font-size: 24px;
 			}
-			#dayinfo {
-				background-color: white;
+			#container_left, #container_right {
+				height: 100%;
+				display: flex;
+				flex-flow: column nowrap;
+			}
+			#container_left {
+				width: 450px;
+			}
+			#container_right {
+				width: 100%;
+			}
+			#inputDate {
+				width: 100%;
+				background-color: rgb(39, 85, 251);
+				display: flex;
+				flex-flow: row nowrap;
+				justify-content: space-between;
+			}
+			#month_last_btn, #month_next_btn {
+				width: 20px;
+				height: 20px;
+				background-color: black;
+				color: white;
 			}
 		</style>
 
@@ -90,6 +114,7 @@
 		var database = {};
 		var cur_months = [];
 		$(document).ready(function() {
+			update_month_label();
 			$(".day").click(function() {
 				console.log(day_by_id(this.id));
 			})
@@ -127,21 +152,19 @@
 		}
 
 		function fetch_list(year, month) {
-			year = Number($('#inputYear').val());
-			month = Number($('#inputMonth').val());
-			if (month === 1) {
-				month_before = (year - 1).toString() + "_12";
+			if (month_sel === 1) {
+				month_before = (year_sel - 1).toString() + "_12";
 			}
 			else {
-				month_before = year.toString() + "_" + (month - 1).toString();
+				month_before = year_sel.toString() + "_" + (month_sel - 1).toString();
 			}
-			if (month === 12) {
-				month_after = (year + 1).toString() + "_1";
+			if (month_sel === 12) {
+				month_after = (year_sel + 1).toString() + "_1";
 			}
 			else {
-				month_after = year.toString() + "_" + (month + 1).toString();
+				month_after = year_sel.toString() + "_" + (month_sel + 1).toString();
 			}
-			cur_months = [month_before, (year.toString() + "_" + month.toString()), month_after];
+			cur_months = [month_before, (year_sel.toString() + "_" + month_sel.toString()), month_after];
 			console.log(cur_months);
 
 			local_update = 0 // if reaches 3 (all 3 datasets available local) it will trigger gui update, else it will wait for missing package to trigger update
@@ -155,7 +178,7 @@
 				local_update++;
 			}
 			else {
-				socket.emit('fetch', {year: year.toString(), month: month.toString()});
+				socket.emit('fetch', {year: year_sel.toString(), month: month_sel.toString()});
 			}
 			if (month_after in database) {
 				local_update++;
@@ -198,81 +221,116 @@
 			}
 		}
 		
+		var month_sel = {{cur_month}};
+		var year_sel = {{cur_year}};
+		function month_next() {
+			if (month_sel === 12) {
+				month_sel = 1;
+				year_sel++;
+			}
+			else {
+				month_sel++;
+			}
+			update_month_label();
+			fetch_list();
+		}
+		function month_last() {
+			if (month_sel === 1) {
+				month_sel = 12;
+				year_sel--;
+			}
+			else {
+				month_sel--;
+			}
+			update_month_label();
+			fetch_list();
+		}
+		function update_month_label() {
+			$('#month_selected_label').text(["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"][month_sel-1] + " " + year_sel);
+		}
+
 		</script>
 	</head>
 	<body>
-		<div id="controlFetch">
-			<input id="inputYear" oninput="fetch_list()" value="2022"></input>
-			<input id="inputMonth" oninput="fetch_list()" value="4"></input>
-		</div>
 		<div class="outerdivs">	
-			<div id="timetable">
-				<div class="week" id="weekheader">
-					<div class="weekheader" id="weekheader0">Mo</div>
-					<div class="weekheader" id="weekheader1">Di</div>
-					<div class="weekheader" id="weekheader2">Mi</div>
-					<div class="weekheader" id="weekheader3">Do</div>
-					<div class="weekheader" id="weekheader4">Fr</div>
-					<div class="weekheader" id="weekheader5">Sa</div>
-					<div class="weekheader" id="weekheader6">So</div>
+			
+			<div id="container_left">
+				<div id="inputDate">
+					<div id="month_last_btn" onclick="month_last()">&lt;</div>
+					<div id="month_selected_label" onclick="month_last()"></div>
+					<div id="month_next_btn" onclick="month_next()">&gt;</div>
 				</div>
-				<div class="week" id="week0">
-					<div class="day" id="day0"></div>
-					<div class="day" id="day1"></div>
-					<div class="day" id="day2"></div>
-					<div class="day" id="day3"></div>
-					<div class="day" id="day4"></div>
-					<div class="day" id="day5"></div>
-					<div class="day" id="day6"></div>
-				</div>
-				<div class="week" id="week1">
-					<div class="day" id="day7"></div>
-					<div class="day" id="day8"></div>
-					<div class="day" id="day9"></div>
-					<div class="day" id="day10"></div>
-					<div class="day" id="day11"></div>
-					<div class="day" id="day12"></div>
-					<div class="day" id="day13"></div>
-				</div>
-				<div class="week" id="week2">
-					<div class="day" id="day14"></div>
-					<div class="day" id="day15"></div>
-					<div class="day" id="day16"></div>
-					<div class="day" id="day17"></div>
-					<div class="day" id="day18"></div>
-					<div class="day" id="day19"></div>
-					<div class="day" id="day20"></div>
-				</div>
-				<div class="week" id="week3">
-					<div class="day" id="day21"></div>
-					<div class="day" id="day22"></div>
-					<div class="day" id="day23"></div>
-					<div class="day" id="day24"></div>
-					<div class="day" id="day25"></div>
-					<div class="day" id="day26"></div>
-					<div class="day" id="day27"></div>
-				</div>
-				<div class="week" id="week4">
-					<div class="day" id="day28"></div>
-					<div class="day" id="day29"></div>
-					<div class="day" id="day30"></div>
-					<div class="day" id="day31"></div>
-					<div class="day" id="day32"></div>
-					<div class="day" id="day33"></div>
-					<div class="day" id="day34"></div>
-				</div>
-				<div class="week" id="week5">
-					<div class="day" id="day35"></div>
-					<div class="day" id="day36"></div>
-					<div class="day" id="day37"></div>
-					<div class="day" id="day38"></div>
-					<div class="day" id="day39"></div>
-					<div class="day" id="day40"></div>
-					<div class="day" id="day41"></div>
+
+				<div id="timetable">
+					<div class="week" id="weekheader">
+						<div class="weekheader" id="weekheader0">Mo</div>
+						<div class="weekheader" id="weekheader1">Di</div>
+						<div class="weekheader" id="weekheader2">Mi</div>
+						<div class="weekheader" id="weekheader3">Do</div>
+						<div class="weekheader" id="weekheader4">Fr</div>
+						<div class="weekheader" id="weekheader5">Sa</div>
+						<div class="weekheader" id="weekheader6">So</div>
+					</div>
+					<div class="week" id="week0">
+						<div class="day" id="day0"></div>
+						<div class="day" id="day1"></div>
+						<div class="day" id="day2"></div>
+						<div class="day" id="day3"></div>
+						<div class="day" id="day4"></div>
+						<div class="day" id="day5"></div>
+						<div class="day" id="day6"></div>
+					</div>
+					<div class="week" id="week1">
+						<div class="day" id="day7"></div>
+						<div class="day" id="day8"></div>
+						<div class="day" id="day9"></div>
+						<div class="day" id="day10"></div>
+						<div class="day" id="day11"></div>
+						<div class="day" id="day12"></div>
+						<div class="day" id="day13"></div>
+					</div>
+					<div class="week" id="week2">
+						<div class="day" id="day14"></div>
+						<div class="day" id="day15"></div>
+						<div class="day" id="day16"></div>
+						<div class="day" id="day17"></div>
+						<div class="day" id="day18"></div>
+						<div class="day" id="day19"></div>
+						<div class="day" id="day20"></div>
+					</div>
+					<div class="week" id="week3">
+						<div class="day" id="day21"></div>
+						<div class="day" id="day22"></div>
+						<div class="day" id="day23"></div>
+						<div class="day" id="day24"></div>
+						<div class="day" id="day25"></div>
+						<div class="day" id="day26"></div>
+						<div class="day" id="day27"></div>
+					</div>
+					<div class="week" id="week4">
+						<div class="day" id="day28"></div>
+						<div class="day" id="day29"></div>
+						<div class="day" id="day30"></div>
+						<div class="day" id="day31"></div>
+						<div class="day" id="day32"></div>
+						<div class="day" id="day33"></div>
+						<div class="day" id="day34"></div>
+					</div>
+					<div class="week" id="week5">
+						<div class="day" id="day35"></div>
+						<div class="day" id="day36"></div>
+						<div class="day" id="day37"></div>
+						<div class="day" id="day38"></div>
+						<div class="day" id="day39"></div>
+						<div class="day" id="day40"></div>
+						<div class="day" id="day41"></div>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div id="dayinfo">
+
+			<div id="container_right">
+
+			</div>
 
 		</div>
 	</body>
