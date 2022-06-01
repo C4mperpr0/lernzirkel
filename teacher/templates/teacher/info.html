@@ -51,34 +51,16 @@
 				color: {{href}};
 				font-size: 14px;
 			}
-			.outerdivs {
-				display: flex;
-				flex-flow: row nowrap;
-
-				background-color: white;
+			#outerdiv {
 				width: 90%;
-				max-width: 90%;
-			}
-			.student_attr {
+				height: 90%;
 				display: flex;
+				justify-content: center;
+				align-items: center;
 				flex-flow: column nowrap;
-				/*width: 16.666%;*/
-				/*max-width: 16.666%;*/
-			}/*
-			.student_grade {
-				width: 5%;
 			}
-			.student_name {
-				width: 25%;
-			}*/
-			.student {
-				padding-left: 10px;
-				padding-right: 10px;
-				overflow: hidden;
-				white-space: nowrap;
-				/*text-overflow: ellipsis;*/
-				text-overflow: ellipsis;
-				display: block;
+			.teacher_attr {
+				font-size: 150%;
 			}
 		</style>
 
@@ -88,29 +70,14 @@
 
 		$(document).ready(function() {
 		
-			socket = io.connect('/student/list');
+			socket = io.connect('/teacher/info');
 
 			socket.on('connect', function() {
-				//socket.emit('fetch', {sort: 'student_creation', order: 'desc', limit: 100, offset: 0});
-				fetch_list();
+				return;
 			});
 			
-			socket.on('update', function(data) {
-				$(".student_name")[0].innerHTML = '';
-				$(".student_school")[0].innerHTML = '';
-				$(".student_grade")[0].innerHTML = '';
-				$(".student_mail")[0].innerHTML = '';
-				$(".student_phone")[0].innerHTML = '';
-				$(".student_creation")[0].innerHTML = '';
-				for ( let s = 0; s < data.data.length; s++ ) {
-					cur_s = data.data[s];
-					$(".student_name")[0].innerHTML += '<div class="student">' + cur_s.surname + ', ' + cur_s.forename + '</div>';
-					$(".student_school")[0].innerHTML += '<div class="student">' + cur_s.school + '</div>';
-					$(".student_grade")[0].innerHTML += '<div class="student">' + cur_s.grade + '</div>';
-					$(".student_mail")[0].innerHTML += '<div class="student">' + cur_s.mail + '</div>';
-					$(".student_phone")[0].innerHTML += '<div class="student">' + cur_s.phone + '</div>';
-					$(".student_creation")[0].innerHTML += '<div class="student">' + cur_s.student_creation + '</div>';
-				}
+			socket.on('refresh', function() {
+				window.location.reload();
 			});
 		
 		});
@@ -121,41 +88,26 @@
 			order = order || 'desc';
 			socket.emit('fetch', {sort: sort, order: order, search: search, limit: 100, offset: 0});
 		};
+
+		function change_variable(parameter, new_status) {
+			if (parameter === 'admin') {
+				socket.emit('set_admin', {value: new_status, id: {{teacher_id | safe}}});
+			} else if (parameter === 'verified') {
+				socket.emit('set_verified', {value: new_status, id: {{teacher_id | safe}}});
+			}
+		};
 		
 		</script>
 	</head>
 	<body>
-		<div id="controlFetch">
-			<input id="inputSearch" oninput="fetch_list('forename', this.value)"></input>
-			<div id="sort_name" onclick="fetch_list('forename')">
-				forename
-			</div>
-			<div id="sort_name" onclick="fetch_list('surname')">
-				surname
-			</div>
-			<div id="sort_school" onclick="fetch_list('school')">
-				school
-			</div>
-			<div id="sort_grade" onclick="fetch_list('grade')">
-				grade
-			</div>
-			<div id="sort_mail" onclick="fetch_list('mail')">
-				mail
-			</div>
-			<div id="sort_phone" onclick="fetch_list('phone')">
-				phone
-			</div>
-			<div id="sort_creation" onclick="fetch_list('student_creation')">
-				creation
-			</div>
-		</div>
 		<div class="outerdivs">			
-			<div class="student_name student_attr"></div>
-			<div class="student_school student_attr"></div>
-			<div class="student_grade student_attr"></div>
-			<div class="student_mail student_attr"></div>
-			<div class="student_phone student_attr"></div>
-			<div class="student_creation student_attr"></div>
+			<div class="teacher_name teacher_attr">{{teacher_surname}}, {{teacher_forename}}</div>
+			<div class="teacher_subjects teacher_attr">{{teacher_subjects}}</div>
+			<div class="teacher_mail teacher_attr">{{teacher_mail}}</div>
+			<div class="teacher_phone teacher_attr">{{teacher_phone}} </div>
+			<div class="teacher_password teacher_attr">Passwort ändern</div>
+			<div class="teacher_admin teacher_attr" onclick="{% if teacher_admin: %}change_variable('admin', 0){% else %}change_variable('admin', 1){% endif %}">Admin: {{" &#10060; klicken um zum Admin zu ernennen" | safe if not teacher_admin else " &#9989; " | safe}}</div>
+			<div class="teacher_verified teacher_attr" onclick="{% if teacher_verified: %}change_variable('verified', 0){% else %}change_variable('verified', 1){% endif %}">Account Aktiviert: {{" &#10060; klicken um zu aktivieren" | safe if not teacher_verified else " &#9989; " | safe}}</div>
 		<div>
 	</body>
 </html>

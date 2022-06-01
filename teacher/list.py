@@ -5,8 +5,6 @@ import json
 from sqlalchemy import asc, desc
 
 from serverconfig import Serverconfig
-
-
 Serverconfig = Serverconfig()
 
 # import color themes
@@ -38,9 +36,9 @@ class Socketio(Namespace):
 
             #data = current_app.DbClasses.Student.query.filter(current_app.DbClasses.Student.surname.contains(query['search']))
             #data = current_app.DbClasses.Student.query.filter(current_app.DbClasses.Student.forename.contains(query['search'])).union_all(current_app.DbClasses.Student.query.filter(current_app.DbClasses.Student.surname.contains(query['search'])))
-            data = current_app.DbClasses.Student.query.filter(current_app.DbClasses.Student.surname.contains(query['search']))
+            data = current_app.DbClasses.Teacher.query.filter(current_app.DbClasses.Teacher.surname.contains(query['search']))
         else:
-            data = current_app.DbClasses.Student.query
+            data = current_app.DbClasses.Teacher.query
         print(data)
         data = data.order_by((asc if query['order'] == 'asc' else desc)(query['sort']))\
             .offset(query['limit']*query['offset']).limit(query['limit']).all()

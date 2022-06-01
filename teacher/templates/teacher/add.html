@@ -224,19 +224,7 @@
 		function submit() {
 
 			// local submit test
-			if (document.getElementById("inputForename").value.length == 0) {
-				outError("err00")
-				return;
-			} else if (document.getElementById("inputSurname").value.length == 0) {
-				outError("err10")
-				return;
-			} else if (document.getElementById("inputSchool").value.length == 0) {
-				outError("err20")
-				return;
-			} else if (document.getElementById("inputGrade").value.length == 0) {
-				outError("err30")
-				return;
-			}
+			// REMOVED TILL ADDED PROPERLY, SEE student/add FOR ALGORITHM
 
 			// server submit test
 			document.getElementById("loadingOverlay").style.display = "block";
@@ -250,10 +238,10 @@
 					processtype: 'add',
 					forename : $('#inputForename').val(),
 					surname : $('#inputSurname').val(),
-					school : $('#inputSchool').val(),
-					grade : $('#inputGrade').val(),
+					subjects : $('#inputSubjects').val(),
 					mail : $('#inputMail').val(),
-					phone : $('#inputPhone').val()
+					phone : $('#inputPhone').val(),
+					password : $('#inputPassword').val()
 				},
 				type : 'POST',
 				success : function(data) {
@@ -290,14 +278,9 @@
 					<input type="text" value="Mustermann" name="surname" id="inputSurname" required />
 				</div>
 				<div class="outerdivs">
-					<label for="inputSchool">Schule</label>
-					<label id="err20" class="errors" style="padding-top: 0;" for="inputSchool">Schule darf nicht leer sein!</label>
-					<input type="text" value="Carl-Friedrich-Gauss-Gymnasium" name="school" id="inputSchool" required />
-				</div>
-				<div class="outerdivs">
-					<label for="inputGrade">Klasse</label>
-					<label id="err30" class="errors" style="padding-top: 0;" for="inputGrade">Klasse darf nicht leer sein!</label>
-					<input type="text" value="1a" name="grade" id="inputGrade" required />
+					<label for="inputSubjects">Fächer</label>
+					<label id="err20" class="errors" style="padding-top: 0;" for="inputSubjects">Es muss mindestens ein Fach angegeben werden!</label>
+					<input type="text" value="Informatik, Englisch" name="subjects" id="inputSubjects" required />
 				</div>
 				<div class="outerdivs">
 					<label for="inputMail">Email</label>
@@ -307,11 +290,14 @@
 					<label for="inputPhone">Telefonnummer</label>
 					<input type="text" value="017612345678" name="phone" id="inputPhone" placeholder="optional" />
 				</div>
-
+				<div class="outerdivs">
+					<label for="inputPassword">Passwort</label>
+					<input type="text" value="123" name="password" id="inputPassword" placeholder="Passwort" />
+				</div>
 				
-				<div id="submitBtn" onclick="submit()">Schüler hinzufügen</div>
+				<div id="submitBtn" onclick="submit()">Lehrer-Account erstellen</div>
 			</div>
-			<a href="/student">Abbrechen</a>
+			<a href="/teacher">Abbrechen</a>
 		</form>
 	</body>
 </html>

@@ -32,6 +32,8 @@ def studentAdd_():
         elif request.form['grade'] == '':
             return jsonify({'error': 'err30'})  # grade empty
 
+
+        # if problems with creation of first students (there is no highest id available) see teacher/add for fix
         student_id = int(current_app.DbClasses.Student.query.order_by(desc(current_app.DbClasses.Student.id)).first().id)
         current_app.db.session.add(current_app.DbClasses.Student(id=1+student_id if student_id is not None else 0,
                                                                  forename=request.form["forename"],

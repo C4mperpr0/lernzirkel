@@ -7,25 +7,6 @@ def init_app(app):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     db = SQLAlchemy(app)
 
-    class Student(db.Model):
-        id = db.Column(db.Integer(), primary_key=True, nullable=False)
-        forename = db.Column(db.String(), nullable=False)
-        surname = db.Column(db.String(), nullable=False)
-        grade = db.Column(db.String(), nullable=False)
-        school = db.Column(db.String(), nullable=False)
-        subjects = db.Column(db.String(), default=None)
-        mail = db.Column(db.String(), default=None)
-        phone = db.Column(db.String(), default=None)
-        student_creation = db.Column(db.DateTime, default=datetime.now())
-
-        def as_dict(self):
-            data = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-            data['student_creation'] = data['student_creation'].strftime("%d.%m.%Y %H:%M")
-            return data
-
-        def __repr__(self):
-            return f"{(self.forename + ' ' + self.surname).replace(' ', '_')}#{self.id}"
-
     class Teacher(db.Model):
         id = db.Column(db.Integer(), primary_key=True, nullable=False)
         forename = db.Column(db.String(), nullable=False)
@@ -44,6 +25,29 @@ def init_app(app):
             else:
                 return False
 
+        def as_dict(self):
+            data = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+            data['teacher_creation'] = data['teacher_creation'].strftime("%d.%m.%Y %H:%M")
+            return data
+
+    class Student(db.Model):
+        id = db.Column(db.Integer(), primary_key=True, nullable=False)
+        forename = db.Column(db.String(), nullable=False)
+        surname = db.Column(db.String(), nullable=False)
+        grade = db.Column(db.String(), nullable=False)
+        school = db.Column(db.String(), nullable=False)
+        subjects = db.Column(db.String(), default=None)
+        mail = db.Column(db.String(), default=None)
+        phone = db.Column(db.String(), default=None)
+        student_creation = db.Column(db.DateTime, default=datetime.now())
+
+        def as_dict(self):
+            data = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+            data['student_creation'] = data['student_creation'].strftime("%d.%m.%Y %H:%M")
+            return data
+
+        def __repr__(self):
+            return f"{(self.forename + ' ' + self.surname).replace(' ', '_')}#{self.id}"
 
     class Timetable(db.Model):
         id = db.Column(db.Integer(), primary_key=True, nullable=False)

@@ -2,6 +2,7 @@ from flask import *
 import json
 import time
 from sqlalchemy import desc
+import hashlib
 
 from serverconfig import Serverconfig
 
@@ -23,21 +24,15 @@ def teacherAdd_():
         print(request.form)
 
         # check for errors
-        if request.form['forename'] == '':
-            return jsonify({'error': 'err00'})  # forename empty
-        elif request.form['surname'] == '':
-            return jsonify({'error': 'err10'})  # surname empty
-        elif request.form['school'] == '':
-            return jsonify({'error': 'err20'})  # school empty
-        elif request.form['grade'] == '':
-            return jsonify({'error': 'err30'})  # grade empty
-
-        student_id = int(current_app.DbClasses.Student.query.order_by(desc(current_app.DbClasses.Student.id)).first().id)
-        current_app.db.session.add(current_app.DbClasses.Student(id=1+student_id if student_id is not None else 0,
+        
+        teacher_id = current_app.DbClasses.Teacher.query.order_by(desc(current_app.DbClasses.Teacher.id)).first()
+        current_app.db.session.add(current_app.DbClasses.Teacher(id=1+int(teacher_id.id) if teacher_id is not None else 0,
                                                                  forename=request.form["forename"],
                                                                  surname=request.form["surname"],
-                                                                 school=request.form["school"],
-                                                                 grade=request.form["grade"].replace(' ', '').upper(),
+                                                                 admin=1 if teacher_id is None else 0,
+                                                                 verified=1 if teacher_id is None else 0,
+                                                                 password=hashlib.sha512(request.form["password"].encode("utf8")).hexdigest(),
+                                                                 subjects=request.form["subjects"],
                                                                  mail=request.form["mail"].lower(),
                                                                  phone=request.form["phone"]))
         current_app.db.session.commit()
