@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>Schülerliste</title>
+		
+		<style>
+			html, body {
+				font-family: 'Trebuchet MS', sans-serif;
+				color: {{font}};
+				height: 100%;
+				margin: 0;
+				user-select: none;
+			}
+			body {
+				background-color: {{dark}};
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			input[type=text], input[type=password] {
+				background-color: {{input}};
+				border: 3px solid {{accent}};
+				box-sizing: border-box;
+				border-top-style: none;
+				border-radius: 0.5vh;
+			}
+			.button {
+				background-color: {{input}};
+				color: {{font}};
+				cursor: pointer;
+				/*margin-top: 10%;*/
+				box-sizing: border-box;
+				border: 3px solid {{light}};
+				border-bottom-style: none;
+				border-radius: 0.5vh;
+				text-align: center;
+			}
+			.button:hover {
+				border: 3px solid {{accent}};
+				border-bottom-style: none;
+			}
+			input, label {
+				width: 100%;
+				padding: 10px;
+			}
+			a {
+				width: 100%;
+				text-align: center;
+				margin-top: 20px;
+				color: {{href}};
+				font-size: 14px;
+			}
+			.outerdivs {
+				display: flex;
+				flex-flow: row nowrap;
+
+				background-color: white;
+				width: 90%;
+				max-width: 90%;
+			}
+			.student_attr {
+				display: flex;
+				flex-flow: column nowrap;
+				/*width: 16.666%;*/
+				/*max-width: 16.666%;*/
+			}/*
+			.student_grade {
+				width: 5%;
+			}
+			.student_name {
+				width: 25%;
+			}*/
+			.student {
+				padding-left: 10px;
+				padding-right: 10px;
+				overflow: hidden;
+				white-space: nowrap;
+				/*text-overflow: ellipsis;*/
+				text-overflow: ellipsis;
+				display: block;
+			}
+		</style>
+
+		<script src="{{url_for('static', filename='socketio_4.4.1.js')}}" crossorigin="anonymous"></script>
+		<script src="{{url_for('static', filename='jquery_3.2.1.js')}}"></script>
+		<script>
+
+		$(document).ready(function() {
+		
+			socket = io.connect('/');
+
+			socket.on('connect', function() {
+				//socket.emit('fetch', {sort: 'student_creation', order: 'desc', limit: 100, offset: 0});
+				fetch();
+			});
+			
+			socket.on('update', function(data) {
+				$(".student_name")[0].innerHTML = '';
+				$(".student_school")[0].innerHTML = '';
+				$(".student_grade")[0].innerHTML = '';
+				$(".student_mail")[0].innerHTML = '';
+				$(".student_phone")[0].innerHTML = '';
+				$(".student_creation")[0].innerHTML = '';
+				for ( let s = 0; s < data.data.length; s++ ) {
+					cur_s = data.data[s];
+					$(".student_name")[0].innerHTML += '<div class="student" onclick="window.open(\'{{url_for("studentInfo.studentInfo_", studentid=1)}}\')">' + cur_s.surname + ', ' + cur_s.forename + '</div>';
+					$(".student_school")[0].innerHTML += '<div class="student">' + cur_s.school + '</div>';
+					$(".student_grade")[0].innerHTML += '<div class="student">' + cur_s.grade + '</div>';
+					$(".student_mail")[0].innerHTML += '<div class="student">' + cur_s.mail + '</div>';
+					$(".student_phone")[0].innerHTML += '<div class="student">' + cur_s.phone + '</div>';
+					$(".student_creation")[0].innerHTML += '<div class="student">' + cur_s.student_creation + '</div>';
+				}
+			});
+		
+		});
+
+		function fetch_list(sort, search, order) {
+			sort = sort || 'student_creation';
+			search = search || '';
+			order = order || 'desc';
+			socket.emit('fetch', {sort: sort, order: order, search: search, limit: 100, offset: 0});
+		};
+		
+		</script>
+	</head>
+	<body>
+		<div id="controlFetch">
+			<input id="inputSearch" oninput="fetch_list('forename', this.value)"></input>
+			<div id="sort_name" onclick="fetch_list('forename')">
+				forename
+			</div>
+			<div id="sort_name" onclick="fetch_list('surname')">
+				surname
+			</div>
+			<div id="sort_school" onclick="fetch_list('school')">
+				school
+			</div>
+			<div id="sort_grade" onclick="fetch_list('grade')">
+				grade
+			</div>
+			<div id="sort_mail" onclick="fetch_list('mail')">
+				mail
+			</div>
+			<div id="sort_phone" onclick="fetch_list('phone')">
+				phone
+			</div>
+			<div id="sort_creation" onclick="fetch_list('student_creation')">
+				creation
+			</div>
+		</div>
+		<div class="outerdivs">			
+			<div class="student_name student_attr"></div>
+			<div class="student_school student_attr"></div>
+			<div class="student_grade student_attr"></div>
+			<div class="student_mail student_attr"></div>
+			<div class="student_phone student_attr"></div>
+			<div class="student_creation student_attr"></div>
+		<div>
+	</body>
+</html>

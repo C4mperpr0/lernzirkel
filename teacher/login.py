@@ -20,7 +20,7 @@ def login_():
         if 'user_id' in session.keys():
             return f"moin {escape(session['teacher_id'])}"
         return render_template('teacher/login.html',
-                               redirect_url=url_for('login.login_'),
+                               redirect_url=url_for('dashboard.dashboard_'),
                                **colorThemes['default'])
     else:
         time.sleep(1)
@@ -29,7 +29,7 @@ def login_():
             session['teacher_id'] = teacher_object.id
             session['teacher_forename'] = teacher_object.forename
             session['teacher_surname'] = teacher_object.surname
-            session['teacher_subjects'] = teacher_object.subject
+            session['teacher_subjects'] = teacher_object.subjects
             session['teacher_admin'] = teacher_object.admin
             print(f"Teacher with id {request.form['teacher_id']} successfully loged in!")
             return jsonify({'login': True})

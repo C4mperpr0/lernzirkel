@@ -14,12 +14,14 @@ with open('./templateColors.json', 'r') as file:
     global colorThemes
     colorThemes = json.loads(file.read())
 
-timetableList = Blueprint("timetableList", __name__, static_folder="static", template_folder="templates/timetable")
+timetableList = Blueprint("timetableList", __name__, static_folder="static", template_folder="templates")
 
 
 @timetableList.route('/', methods=['GET', 'POST'])
 def timetableList_():
-    return render_template('timetable/list.html'
+    return render_template('timetable/list.html',
+                           cur_month=datetime.datetime.now().month,
+                           cur_year=datetime.datetime.now().year
                            **colorThemes['default'])
 
 

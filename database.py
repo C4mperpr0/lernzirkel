@@ -73,6 +73,7 @@ def init_app(app):
         teacher = db.Column(db.String(), nullable=False)
         day = db.Column(db.Integer(), nullable=False) # days as 0 to 6 (0 is monday)
         subject = db.Column(db.String(), nullable=True)
+        regular_initiation = db.Column(db.DateTime, default=datetime.now())
 
         def as_timetable(self, year, month, date_as_json=False):
             dates = []

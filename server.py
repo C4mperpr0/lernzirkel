@@ -7,7 +7,9 @@ import datetime
 from serverconfig import Serverconfig
 from flask_session import Session
 import database
+import backup
 
+import dashboard
 import teacher
 import student
 import timetable
@@ -34,6 +36,7 @@ def create_app():
 app, socketio = create_app()
 
 app.register_blueprint(docs.docs.docs, url_prefix="/docs")
+app.register_blueprint(dashboard.dashboard.dashboard, url_prefix="/")
 app.register_blueprint(teacher.add.teacherAdd, url_prefix="/teacher/add")
 app.register_blueprint(teacher.list.teacherList, url_prefix="/teacher/list")
 app.register_blueprint(teacher.info.teacherInfo, url_prefix="/teacher/info")
@@ -43,6 +46,7 @@ app.register_blueprint(student.list.studentList, url_prefix="/student/list")
 app.register_blueprint(student.info.studentInfo, url_prefix="/student/info")
 app.register_blueprint(timetable.add.timetableAdd, url_prefix="/timetable/add")
 app.register_blueprint(timetable.list.timetableList, url_prefix="/timetable/list")
+socketio.on_namespace(dashboard.dashboard.Socketio('/'))
 socketio.on_namespace(teacher.list.Socketio('/teacher/list'))
 socketio.on_namespace(teacher.info.Socketio('/teacher/info'))
 socketio.on_namespace(student.list.Socketio('/student/list'))
