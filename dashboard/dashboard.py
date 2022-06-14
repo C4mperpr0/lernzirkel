@@ -2,6 +2,7 @@ from flask import *
 from flask_socketio import Namespace, emit
 import json
 import time
+import datetime
 
 from serverconfig import Serverconfig
 
@@ -27,18 +28,14 @@ def dashboard_():
 # socket_io
 class Socketio(Namespace):
     def on_fetch_today(self):
-        print(query)
-        if any([k not in query.keys() for k in ['year', 'month']]):
-            return
-        if not query['year'].isdigit() or not query['month'].isdigit() or not (0 < int(query['month']) < 13):
-            return
 
-        init_day = datetime.datetime(int(query['year']), int(query['month']), 1).weekday()
+        start_day = datetime.datetime.now()
+        end_day = start_day + datetime.timedelta(days=1)
 
-        data = current_app.DbClasses.Timetable.query.filter(current_app.DbClasses.Timetable.date.between(f"{query['year']}-{int(query['month']):02}-01",  f"{query['year'] if int(query['month']) < 12 else int(query['year']) + 1}-{(int(query['month']) + 1 if int(query['month']) < 12 else 1):02}-01")).order_by(current_app.DbClasses.Timetable.date.asc()).all()
+        data = current_app.DbClasses.Timetable.query.filter(current_app.DbClasses.Timetable.date.between(f"{start_day.year}-{start_day.month:02}-{start_day.day:02}", f"{end_day.year}-{end_day.month:02}-{end_day.day:02}")).order_by(current_app.DbClasses.Timetable.date.asc()).all()
 
         print(data)
-
+        """
         data2 = current_app.DbClasses.TimetableRegular.query.all()
         print("---------DATA2 --------")
         print(len(data))
@@ -46,15 +43,11 @@ class Socketio(Namespace):
         #print([t.as_timetable(int(query['year']), int(query['month']), date_as_json=True) for t in data2] if len(data2) != 0 else [])
         timetable_from_regular = []
         for t in data2:
-            timetable_from_regular += t.as_timetable(int(query['year']), int(query['month']), date_as_json=True)
+            tlist/metable_from_regular += t.as_timetable(int(query['year']), int(query['month']), date_as_json=True)
         print("---------DATA2 end ----")
-
+        """
         
-        emit('update', {'data': ([t.as_dict(date_as_json=True) for t in data] if len(data) != 0 else []) + timetable_from_regular,
-        'init_day': init_day,
-        'month_length': calendar.monthrange(int(query['year']), int(query['month']))[1],
-        'year': int(query['year']),
-        'month': int(query['month'])})
+        emit('update', {'data': ([t.as_dict(date_as_json=True) for t in data] if len(data) != 0 else [])})
 
         """
         if query['search'] != '':

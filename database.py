@@ -54,6 +54,7 @@ def init_app(app):
         student = db.Column(db.String(), nullable=False)
         teacher = db.Column(db.String(), nullable=False)
         date = db.Column(db.DateTime, nullable=False)
+        duration = db.Column(db.Integer(), nullable=False, default=1)
         status = db.Column(db.String(), nullable=False, default="pending")
         subject = db.Column(db.String(), nullable=True, default=None)
         comment = db.Column(db.String(), nullable=False, default="")
@@ -76,6 +77,7 @@ def init_app(app):
         regular_initiation = db.Column(db.DateTime, default=datetime.now())
 
         def as_timetable(self, year, month, date_as_json=False):
+            # give an timetable-like object for every matching day within given month 
             dates = []
             offset = self.day - datetime(year, month, 1).weekday()
             print(f"offset: {offset}")

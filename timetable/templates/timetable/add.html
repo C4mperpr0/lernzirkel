@@ -327,7 +327,9 @@
 				<div class="outerdivs">
 					<label for="inputTeacher">Lehrer</label>
 					<select name="teacher" id="inputTeacher" required>
-						<option value="#0000">Testlehrer</option>
+						{% for teacher in all_teachers: %}
+						<option value="{{teacher.id}}" {% if teacher.id == teacher_logedin_id: %}selected="selected"{% endif %}>{{teacher.surname}}, {{teacher.forename}}</option>
+						{% endfor %}
 					</select>
 				</div>
 				<div class="outerdivs">
@@ -354,6 +356,7 @@
 				<div class="outerdivs inputTypeWeekly">
 					<label for="inputDate">Datum</label>
 					<input type="date" name="date" id="inputDate" />
+					<input type="time" name="time" id="inputTime" />
 				</div>
 				
 				<div id="submitBtn" onclick="submit()">Stunde eintragen</div>

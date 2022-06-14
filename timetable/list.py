@@ -21,7 +21,7 @@ timetableList = Blueprint("timetableList", __name__, static_folder="static", tem
 def timetableList_():
     return render_template('timetable/list.html',
                            cur_month=datetime.datetime.now().month,
-                           cur_year=datetime.datetime.now().year
+                           cur_year=datetime.datetime.now().year,
                            **colorThemes['default'])
 
 

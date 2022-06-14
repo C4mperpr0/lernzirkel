@@ -7,7 +7,8 @@ import datetime
 from serverconfig import Serverconfig
 from flask_session import Session
 import database
-import backup
+#import backup
+# DO NOT FORGET TO REACTIVATE AND IMPROVE BACKUP FUNCIONALITY
 
 import dashboard
 import teacher
@@ -56,6 +57,11 @@ socketio.on_namespace(timetable.list.Socketio('/timetable/list'))
 @app.route('/loginred')
 def loginred():
     return '<html><body> <form action="../login", method="GET"> <input tpye="text", name="redirect"/> <input type="submit" value="submit" /> </form> </body></html>'
+
+@app.route('/jakob_stinkt')
+def jakob_stinkt():
+    return '<html><head><title>Jakob Stinkt?</title></head><body><h1>Ja es ist wahr! Jakob stinkt!</h1></body></html>'
+
 
 # URL NOT WORKING FIX LATER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 @app.route('/help')

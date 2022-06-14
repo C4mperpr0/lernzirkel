@@ -38,7 +38,7 @@ def timetableAdd_():
                                                                        teacher=request.form["teacher"],
                                                                        date=datetime.strptime(request.form["date"], '%Y-%m-%d'))) # '%d/%m/%y %H:%M:%S'
         else:
-            timetable_regular_id = current_app.DbClasses.TimetableRegular.query.order_by(desc(current_app.DbClasses.TimetableRegular.id)).first()
+            timetable_regular_id = current_app.DbClasses.TimetableRegular.query.order_by(asc(current_app.DbClasses.TimetableRegular.id)).first()
             current_app.db.session.add(current_app.DbClasses.TimetableRegular(id=1+timetable_regular_id.id if timetable_regular_id is not None else 0,
                                                                               student=request.form["student"],
                                                                               teacher=request.form["teacher"],
@@ -50,4 +50,6 @@ def timetableAdd_():
 
     else:
         return render_template('timetable/add.html',
+                               all_teachers=current_app.DbClasses.Teacher.query.order_by(current_app.DbClasses.Teacher.surname).all(),
+                               teacher_logedin_id=session['teacher_id'],
                                **colorThemes['default'])

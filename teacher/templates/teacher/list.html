@@ -102,7 +102,7 @@
 				$(".teacher_phone")[0].innerHTML = '';
 				for ( let s = 0; s < data.data.length; s++ ) {
 					cur_s = data.data[s];
-					$(".teacher_name")[0].innerHTML += '<div class="teacher" onclick="window.open(\'{{url_for("teacherInfo.teacherInfo_", teacherid=0)}}\')">' + cur_s.surname + ', ' + cur_s.forename + '</div>';
+					$(".teacher_name")[0].innerHTML += '<div class="teacher" onclick="window.open(\'{{url_for("teacherInfo.teacherInfo_", teacher_id=)}}\')">' + cur_s.surname + ', ' + cur_s.forename + '</div>';
 					$(".teacher_subjects")[0].innerHTML += '<div class="teacher">' + cur_s.subjects + '</div>';
 					$(".teacher_mail")[0].innerHTML += '<div class="teacher">' + cur_s.mail + '</div>';
 					$(".teacher_phone")[0].innerHTML += '<div class="teacher">' + cur_s.phone + '</div>';
